@@ -22,12 +22,6 @@ int main() {
     string line;
 
     if (file.is_open()) {
-        // Remove BOM if present
-        char bom[3];
-        file.read(bom, 3);
-        if (!(bom[0] == '\xEF' && bom[1] == '\xBB' && bom[2] == '\xBF'))
-            file.seekg(0);
-
         while (getline(file, line)) {
             text += line + "\n";
         }
