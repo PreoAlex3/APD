@@ -18,7 +18,7 @@ bool isAlphanumeric(char c) {
     return std::isalnum(static_cast<unsigned char>(c));
 }
 
-void processText(const string& text, map<string, int>& wordCounts, mutex& mtx) {
+void processText(const string& text, map<string, int>* wordCounts, mutex* mtx) {
     // Use stringstream to split the text into words
     stringstream ss(text);
     string word;
@@ -33,8 +33,8 @@ void processText(const string& text, map<string, int>& wordCounts, mutex& mtx) {
             }
         }
         if (!cleanWord.empty()) {
-            lock_guard<mutex> lock(mtx);
-            wordCounts[cleanWord]++;
+            lock_guard<mutex> lock(*mtx);
+            (*wordCounts)[cleanWord]++;
         }
     }
 }
@@ -65,7 +65,7 @@ int main() {
     // Create threads to process each line of text
     vector<thread> threads;
     for (const auto& line : lines) {
-        threads.emplace_back(processText, line, ref(wordCounts), ref(mtx));
+        threads.emplace_back(processText, line, &wordCounts, &mtx);
     }
 
     // Join threads
